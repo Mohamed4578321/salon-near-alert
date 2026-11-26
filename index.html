@@ -1,0 +1,12 @@
+<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>تنبيه القرب</title><body style="font-family:sans-serif;padding:16px">
+<h2>تنبيه القرب من الفرع</h2><button id="go" style="font-size:18px;padding:12px">تفعيل</button>
+<p id="s">لم يبدأ</p><script>
+const d=(a,b,c,e)=>{const R=6371000,t=x=>x*Math.PI/180,h=Math.sin(t(c-a)/2)**2+Math.cos(t(a))*Math.cos(t(c))*Math.sin(t(e-b)/2)**2;return 2*R*Math.asin(Math.sqrt(h))};
+let sent={};
+go.onclick=async()=>{const p=await Notification.requestPermission();if(p!=='granted'){s.textContent='لازم تسمح بالإشعارات';return}
+const B=await (await fetch('branches.json')).json();
+navigator.geolocation.watchPosition(p=>{let m=1e9;for(const b of B){const x=d(p.coords.latitude,p.coords.longitude,b.lat,b.lon);m=Math.min(m,x);
+if(x<b.radius&&Date.now()-(sent[b.name]||0)>6*3600e3){sent[b.name]=Date.now();new Notification(b.name,{body:b.message})}}
+s.textContent='أقرب فرع: '+Math.round(m)+' متر'},e=>s.textContent=e.message,{enableHighAccuracy:true})}
+</script></body></html>
